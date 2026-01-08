@@ -7,17 +7,7 @@ function getUrlParam(param) {
   return urlParams.get(param)
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const steamid = getUrlParam("steamid")
 
-  if (steamid) {
-    const avatarEl = document.getElementById("avatar")
-    if (avatarEl) {
-      avatarEl.style.backgroundImage =
-        "url('https://steamcommunity.com/actions/DisplayAvatar?steamid=" + steamid + "&avatarsize=full')"
-    }
-  }
-})
 
 let filesTotal = 0
 let filesNeeded = 0
