@@ -1,0 +1,587 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Rajdhani", sans-serif;
+  color: white;
+  overflow: hidden;
+  background-color: #050505;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+  /* Hide default cursor to use custom one */
+  cursor: none;
+}
+
+/* Custom cursor to bypass GMod's hidden mouse issue */
+#custom-cursor {
+  position: fixed;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 1000;
+  mix-blend-mode: difference;
+  transition: transform 0.1s ease-out;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+}
+
+#custom-cursor::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* added scanline overlay styling */
+#scanlines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 100;
+  /* reverted pointer-events to auto to block interactions if desired */
+  pointer-events: auto;
+  opacity: 0.3;
+}
+
+/* HINTERGRUND */
+#background {
+  position: fixed;
+  /* Increase size to prevent white edges during movement */
+  width: 110%;
+  height: 110%;
+  top: -5%;
+  left: -5%;
+  background: url("background.jpg") center / cover no-repeat;
+  filter: brightness(0.55);
+  z-index: -1;
+  /* Remove pulse animation to handle movement via JS */
+  transition: transform 0.2s ease-out;
+}
+
+@keyframes bgPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    filter: brightness(0.55);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(0.7);
+  }
+}
+
+/* Modern terminal corners */
+.terminal-corner {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  z-index: 5;
+  /* reverted pointer-events to auto */
+  pointer-events: auto;
+}
+.top-left {
+  top: 15px;
+  left: 15px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.bottom-right {
+  bottom: 15px;
+  right: 15px;
+  border-left: 0;
+  border-top: 0;
+}
+
+/* Redesigned top-right panel for a cleaner, framed look */
+#top-right-panel {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  z-index: 20;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  transition: border-color 2s ease-in-out, box-shadow 2s ease-in-out;
+}
+
+#top-right-logo {
+  width: 320px;
+  animation: float 6s ease-in-out infinite;
+}
+
+#top-right-logo img {
+  width: 100%;
+  transition: filter 3s ease-in-out;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Added Hologram Styles */
+/* Repositioned Hologram to bottom-right and increased message box size */
+#hologram-container {
+  position: fixed;
+  bottom: 80px;
+  right: 60px;
+  width: 550px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hologram-projection {
+  position: relative;
+  width: 300px;
+  height: 400px;
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.hologram-character {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  display: none;
+  transition: opacity 0.8s ease-in-out;
+  filter: sepia(100%) hue-rotate(190deg) brightness(1.2) contrast(1.2);
+  animation: holoFloat 4s ease-in-out infinite, holoGlitch 5s step-end infinite;
+}
+
+.hologram-character.sith {
+  filter: sepia(100%) hue-rotate(-50deg) brightness(1.2) contrast(1.2) drop-shadow(0 0 15px rgba(255, 0, 0, 0.6));
+}
+
+/* Updated Jedi filter to be more blue/cyan */
+.hologram-character.jedi {
+  filter: sepia(100%) hue-rotate(180deg) brightness(1.2) contrast(1.2) drop-shadow(0 0 15px rgba(0, 255, 255, 0.6));
+}
+
+.hologram-character.active {
+  display: block;
+  opacity: 0.8;
+}
+
+.hologram-character img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hologram-beam {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px; /* Wider beam for larger characters */
+  height: 200px;
+  background: radial-gradient(ellipse at bottom, rgba(0, 255, 255, 0.25) 0%, rgba(0, 255, 255, 0) 70%);
+  clip-path: polygon(20% 100%, 80% 100%, 100% 0, 0 0);
+  animation: beamFlicker 0.1s infinite;
+}
+
+/* Made the message panel larger and more prominent */
+.hologram-message {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(12px);
+  padding: 20px 30px;
+  border-radius: 4px;
+  border-right: 5px solid #00ffff;
+  border-left: none;
+  width: 100%;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 255, 255, 0.1);
+  text-align: right;
+  transition: border-color 1s ease-in-out;
+}
+
+#hologram-text {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 20px;
+  color: #00ffff;
+  line-height: 1.5;
+  letter-spacing: 1px;
+  text-shadow: 0 0 10px rgba(0, 255, 255, 0.6);
+  white-space: normal;
+}
+
+@keyframes holoFloat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02);
+  }
+}
+
+@keyframes holoGlitch {
+  0%,
+  95%,
+  100% {
+    opacity: 0.7;
+    transform: translateX(0);
+  }
+  96% {
+    opacity: 0.4;
+    transform: translateX(3px);
+  }
+  97% {
+    opacity: 0.8;
+    transform: translateX(-3px);
+  }
+  98% {
+    opacity: 0.2;
+    transform: translateX(5px);
+  }
+}
+
+@keyframes beamFlicker {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* SEITENPANEL */
+#sidepanel {
+  position: fixed;
+  left: 30px;
+  top: 30px;
+  bottom: 30px;
+  width: 320px;
+  /* Set base background and transition for the color cycle */
+  background: linear-gradient(180deg, rgba(20, 20, 25, 0.95), rgba(120, 30, 30, 0.9));
+  border-radius: 14px;
+  padding: 25px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: background 2s ease-in-out, border-color 2s ease-in-out, box-shadow 2s ease-in-out;
+  border: 1px solid rgba(184, 50, 50, 0.3);
+}
+
+/* ensure all dynamic panels transition at the same speed */
+#top-right-panel,
+#sidepanel,
+.hologram-message {
+  transition: background 2s ease-in-out, border-color 2s ease-in-out, box-shadow 2s ease-in-out;
+}
+
+/* Added classes for the 10s interval color cycle */
+#sidepanel.color-red,
+#top-right-panel.color-red {
+  border-color: rgba(184, 50, 50, 0.4);
+  box-shadow: 0 0 30px rgba(184, 50, 50, 0.15);
+}
+
+#sidepanel.color-red {
+  background: linear-gradient(180deg, rgba(15, 5, 5, 0.95), rgba(40, 5, 5, 0.9));
+}
+
+#sidepanel.color-blue,
+#top-right-panel.color-blue {
+  border-color: rgba(47, 95, 210, 0.4);
+  box-shadow: 0 0 30px rgba(47, 95, 210, 0.15);
+}
+
+#sidepanel.color-blue {
+  background: linear-gradient(180deg, rgba(5, 5, 15, 0.95), rgba(5, 15, 40, 0.9));
+}
+
+/* Logo glow cycle classes */
+#top-right-panel.color-red #top-right-logo img {
+  filter: drop-shadow(0 0 15px rgba(184, 50, 50, 0.5));
+}
+
+#top-right-panel.color-blue #top-right-logo img {
+  filter: drop-shadow(0 0 15px rgba(47, 95, 210, 0.5));
+}
+
+/* PROFIL */
+.profile h2 {
+  margin: 0;
+  /* updated headings to Orbitron for a high-tech/military feel */
+  font-family: "Orbitron", sans-serif;
+  font-size: 22px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.subtitle {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.8;
+  /* Rajdhani for secondary text */
+  font-family: "Rajdhani", sans-serif;
+}
+
+/* AVATAR */
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 15px 0;
+  /* simplified path to logo1.png */
+  background-image: url("logo1.png");
+  background-size: cover;
+  background-position: center;
+}
+
+/* SEKTIONEN */
+.section {
+  margin-top: 20px;
+}
+
+.section h3 {
+  margin-bottom: 12px;
+  /* Orbitron for section titles */
+  font-family: "Orbitron", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-left: 3px solid currentColor;
+  padding-left: 10px;
+}
+
+.section p {
+  margin: 6px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* Changelogs */
+/* Removed scrollbars and fixed panel layouts to be non-scrollable */
+.changelogs {
+  max-height: none;
+  overflow: hidden;
+}
+
+.changelog-item {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.changelog-item:last-child {
+  border-bottom: none;
+}
+
+.changelog-title {
+  margin: 0;
+  font-size: 13px;
+  color: #ffcc00;
+  font-weight: 500;
+}
+
+.changelog-meta {
+  margin: 4px 0 0 0;
+  font-size: 11px;
+  opacity: 0.5;
+}
+
+/* Removed social link styles and enlarging loading bar components */
+
+/* Team-Liste Styling */
+.team-list {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.team-scroll {
+  flex: 1;
+  overflow: hidden; /* Disabled scrolling */
+  max-height: none;
+}
+
+.team-member {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-member:last-child {
+  border-bottom: none;
+}
+
+.team-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.team-rank {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.rank-red {
+  background: #dc2626;
+  color: white;
+}
+
+.rank-yellow {
+  background: #eab308;
+  color: black;
+}
+
+.rank-purple {
+  background: #9333ea;
+  color: white;
+}
+
+/* Scrollbar Styling */
+.changelogs::-webkit-scrollbar,
+.team-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+
+.changelogs::-webkit-scrollbar-thumb,
+.team-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 2px;
+}
+
+/* ZENTRALE BOX */
+#center {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+#logo {
+  width: 150px;
+  height: 150px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.logo-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.logo-img.active {
+  opacity: 1;
+}
+
+/* LADEBEREICH */
+#loadingbox {
+  width: 500px; /* Enlarged loading box width */
+}
+
+#progressbar {
+  height: 8px; /* Enlarged loading bar height */
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#progress {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #b83232, #2f5fd2, #b83232);
+  background-size: 200% 100%;
+  animation: barFlow 4s linear infinite;
+  box-shadow: 0 0 10px currentColor;
+}
+
+@keyframes barFlow {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+#status {
+  margin-top: 15px;
+  font-size: 18px; /* Enlarged status text */
+  font-family: "Orbitron", sans-serif; /* Using brand font for status */
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+#download-info {
+  margin-top: 8px;
+  font-size: 13px; /* Enlarged download info text */
+  opacity: 0.6;
+  max-width: 500px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* INFOBOX UNTEN */
+#infobox {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  font-family: "Orbitron", sans-serif; /* Using brand font for rotating info text */
+  font-size: 15px; /* Slightly enlarged info text */
+  text-align: center;
+  opacity: 0.9;
+  z-index: 15;
+  min-width: 300px;
+}

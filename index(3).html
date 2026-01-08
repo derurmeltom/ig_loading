@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>The Eternal Conflict – Loading</title>
+    <!-- added Orbitron and Rajdhani fonts for a modern sci-fi look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- added terminal decoration elements -->
+<div class="terminal-corner top-left"></div>
+<div class="terminal-corner bottom-right"></div>
+
+<!-- added scanlines overlay for sci-fi look -->
+<div id="scanlines"></div>
+
+<!-- Added cursor element to ensure visibility in GMod -->
+<div id="custom-cursor"></div>
+
+<!-- added top-right-panel wrapper for cleaner look -->
+<div id="top-right-panel">
+    <div id="top-right-logo">
+        <img src="grafik.png" alt="Infinity Gaming Logo">
+    </div>
+</div>
+
+<!-- HINTERGRUND -->
+<div id="background"></div>
+
+<!-- LINKES INFO PANEL -->
+<div id="sidepanel">
+    <div class="profile">
+
+        <!-- SERVER NAME -->
+        <h2 id="servername">The Eternal Conflict</h2>
+        <span class="subtitle">Infinity Gaming Community</span>
+
+        <!-- STEAM AVATAR -->
+        <!-- simplified path to logo1.png for avatar placeholder -->
+        <div class="avatar" id="avatar" style="background-image: url('logo1.png');"></div>
+
+    </div>
+
+    <!-- Changelogs Bereich -->
+    <div class="section changelogs">
+        <h3>CHANGELOGS</h3>
+        <div class="changelog-item">
+            <p class="changelog-title">+ Custom Map hinzugefügt</p>
+            <p class="changelog-meta">Game-Design · 25.12.2024, 18:00</p>
+        </div>
+        <div class="changelog-item">
+            <p class="changelog-title">Bugfix: Spawn-Problem behoben</p>
+            <p class="changelog-meta">Admin · 23.12.2024, 15:30</p>
+        </div>
+        <div class="changelog-item">
+            <p class="changelog-title">+ Neue Map hinzugefügt</p>
+            <p class="changelog-meta">Admin · 22.12.2024, 20:15</p>
+        </div>
+        <div class="changelog-item">
+            <p class="changelog-title">Balancing: Waffen angepasst</p>
+            <p class="changelog-meta">Admin · 21.12.2024, 12:00</p>
+        </div>
+    </div>
+
+    <!-- Team-Liste hinzugefügt -->
+    <div class="section team-list">
+        <h3>TEAM</h3>
+        <div class="team-scroll">
+            <div class="team-member">
+                <span class="team-name">Lukas</span>
+                <span class="team-rank rank-red">Communityleitung</span>
+            </div>
+            <div class="team-member">
+                <span class="team-name">derurmeltom</span>
+                <span class="team-rank rank-yellow">Projektleitung</span>
+            </div>
+            <div class="team-member">
+                <span class="team-name">Brike</span>
+                <span class="team-rank rank-yellow">Teamleitung</span>
+            </div>
+            <div class="team-member">
+                <span class="team-name">Südwest</span>
+                <span class="team-rank rank-purple">Junior Admin</span>
+            </div>
+            <div class="team-member">
+                <span class="team-name">Bluebell</span>
+                <span class="team-rank rank-purple">Junior Admin</span>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ZENTRALE INFO -->
+<div id="center">
+    <div id="logo">
+        <!-- simplified paths to logo1.png and logo2.png -->
+        <img src="logo1.png" class="logo-img active" alt="Logo 1">
+        <img src="logo2.png" class="logo-img" alt="Logo 2">
+    </div>
+
+    <div id="loadingbox">
+        <div id="progressbar">
+            <div id="progress"></div>
+        </div>
+        <p id="status">Verbinde mit Server...</p>
+        <p id="download-info">Warte auf Download-Informationen...</p>
+    </div>
+</div>
+
+<!-- Moved Hologram container to the bottom right and updated character images -->
+<div id="hologram-container">
+    <div class="hologram-projection">
+        <div class="hologram-character sith active">
+            <img src="sith.png" alt="Sith Projection">
+        </div>
+        <div class="hologram-character jedi">
+            <img src="jedi.png" alt="Jedi Projection">
+        </div>
+        <div class="hologram-beam"></div>
+    </div>
+    <div class="hologram-message">
+        <p id="hologram-text">Empfange Übertragung...</p>
+    </div>
+</div>
+
+<!-- Added hidden audio elements for background music -->
+<div id="audio-container" style="display: none;">
+    <audio id="audio-sith" preload="auto" crossorigin="anonymous">
+        <source src="sith.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-jedi" preload="auto" crossorigin="anonymous">
+        <source src="jedi.mp3" type="audio/mpeg">
+    </audio>
+</div>
+
+<div id="infobox">
+    <p id="infotext">
+        Willkommen auf unserem Roleplay Server.
+    </p>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
