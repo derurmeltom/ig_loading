@@ -473,6 +473,11 @@ body {
   color: white;
 }
 
+.rank-cyan {
+  background: #0ec0c0;
+  color: white;
+}
+
 /* Scrollbar Styling */
 .changelogs::-webkit-scrollbar,
 .team-scroll::-webkit-scrollbar {
